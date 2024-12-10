@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://cg768yibrgm1k"]
+
+[ext_resource type="Script" path="res://scripts/square.gd" id="1_2awk8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ujbq5"]
+
+[node name="Square" type="Node2D"]
+script = ExtResource("1_2awk8")
+
+[node name="PieceSprite" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(3, 3)
+shape = SubResource("RectangleShape2D_ujbq5")
+
+[node name="TargetSprite" type="Sprite2D" parent="."]
+position = Vector2(-1, -1)
+scale = Vector2(3, 3)
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_mouse_enter"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_mouse_exit"]
