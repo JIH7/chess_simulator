@@ -3,6 +3,7 @@ class_name Queen
 
 func _init(_color: int) -> void:
     pieceName = "Queen"
+    pieceAbrev = "Q"
     super(_color)
 
 func checkMoves(position: Vector2i, board: Node2D) -> Array:

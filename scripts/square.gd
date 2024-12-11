@@ -13,6 +13,7 @@ var target_state: int = -1
 
 var board: Node2D
 var coordinates: Vector2i
+var _algebraicCoords: String = ""
 
 # Variables for displacing sprite
 var WORLD_POS: Vector2
@@ -37,6 +38,25 @@ func initialize(x: int, y: int, chessBoard: Node2D) -> void:
 	target_pos = _sprite.position
 	board = chessBoard
 
+	if x == 0:
+		_algebraicCoords += "a"
+	elif x == 1:
+		_algebraicCoords += "b"
+	elif x == 2:
+		_algebraicCoords += "c"
+	elif x == 3:
+		_algebraicCoords += "d"
+	elif x == 4:
+		_algebraicCoords += "e"
+	elif x == 5:
+		_algebraicCoords += "f"
+	elif x == 6:
+		_algebraicCoords += "g"
+	else:
+		_algebraicCoords += "h"
+
+	_algebraicCoords += str(y+1)
+
 func _process(delta) -> void:
 	if target_pos != _sprite.position:
 		_sprite.position = _sprite.position.lerp(target_pos, delta * 14)
@@ -53,6 +73,10 @@ func getPiece() -> ChessPiece:
 func setPiece(newPiece: ChessPiece) -> void:
 	_currentPiece = newPiece
 	setSprite(newPiece)
+
+# Returns coordinates in algebraic notation
+func getCoords() -> String:
+	return _algebraicCoords
 
 # Sprite Management
 
@@ -182,7 +206,12 @@ func _move_piece(newSquare, isCapturing) -> void:
 	if !selected:
 		return
 
+	# Record move
 	destination = newSquare
+	if !isCapturing:
+		board.addMove(_currentPiece.pieceAbrev + newSquare.getCoords())
+	else:
+		board.addMove(_currentPiece.pieceAbrev + "x" + newSquare.getCoords())
 
 	SignalBus.emit_signal("clear_targets")
 	if isCapturing: # Capture piece at target square. ToDo, add captured piece to points

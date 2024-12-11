@@ -3,8 +3,11 @@ extends Node2D
 var grid: Array
 var squareScene: PackedScene
 
+var moveLedger: Array
+
 func _ready() -> void:
 	grid = Array()
+	moveLedger = Array()
 	squareScene = preload("res://prefabs/square.tscn")
 
 	for y: int in range(8):
@@ -51,3 +54,7 @@ func _populateSquare(square) -> void:
 
 func getSquare(coordinates: Vector2i) -> Node2D:
 	return grid[coordinates.y][coordinates.x]
+
+func addMove(move: String) -> void:
+	moveLedger.append(move)
+	print(move)
