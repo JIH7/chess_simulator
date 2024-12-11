@@ -5,9 +5,10 @@ enum {WHITE, BLACK}
 var color: int
 var hasMoved: bool = false
 
-func _init(_color) -> void:
+func _init(_color: int) -> void:
 	color = _color
 
+# Access color as string
 func getColor() -> String:
 	if color == WHITE:
 		return "White"
@@ -20,6 +21,10 @@ func toString() -> String:
 func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	return Array()
 
+func findChecks(position: Vector2i, board: Node2D) -> Array:
+	return Array()
+
+# Checks if a piece exists and can be captured
 func canCaptureTarget(square: Node2D) -> bool:
 	var other = square.getPiece()
 	if other != null:

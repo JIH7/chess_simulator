@@ -58,3 +58,21 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	output.append(captureTargets)			
 	return output
 
+func findChecks(position: Vector2i, board: Node2D) -> Array:
+	var checkTargets: Array = Array()
+
+	var x: int = position.x
+	var y: int = position.y
+	var targetSquare: Node
+	if color == WHITE:
+		if x > 0:
+			targetSquare = board.getSquare(Vector2i(x - 1, y + 1))
+			if canCaptureTarget(targetSquare):
+				checkTargets.append(targetSquare)
+		# Check to the right
+		if x < 7:
+			targetSquare = board.getSquare(Vector2i(x + 1, y + 1))
+			if canCaptureTarget(targetSquare):
+				checkTargets.append(targetSquare)
+
+	return Array()

@@ -5,6 +5,9 @@ enum {WHITE, BLACK, LOCKED}
 var actionState: int = WHITE
 var activePlayer: int = WHITE
 
+var whiteCheck: bool = false
+var blackCheck: bool = false
+
 signal piece_selected
 signal clear_targets
 signal move_here

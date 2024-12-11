@@ -7,11 +7,11 @@ func _ready() -> void:
 	grid = Array()
 	squareScene = preload("res://prefabs/square.tscn")
 
-	for y in range(8):
-		var row = Array()
+	for y: int in range(8):
+		var row: Array = Array()
 
-		for x in range(8):
-			var newSquare = squareScene.instantiate()
+		for x: int in range(8):
+			var newSquare: Node = squareScene.instantiate()
 			newSquare.position = Vector2((x - 4) * 66 + 33, -((y - 4) * 66 + 33))
 			add_child(newSquare)
 			row.append(newSquare)
@@ -21,7 +21,7 @@ func _ready() -> void:
 
 		grid.append(row.duplicate())
 
-func _populateSquare(square):
+func _populateSquare(square) -> void:
 	if square.coordinates.y == 0:
 		if square.coordinates.x == 0 || square.coordinates.x == 7:
 			square.setPiece(Rook.new(ChessPiece.WHITE))
