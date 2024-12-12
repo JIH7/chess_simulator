@@ -169,7 +169,7 @@ func select():
 	pieceTargets = _currentPiece.checkMoves(coordinates, board)
 	target_pos = WORLD_POS + Vector2(0, -7)
 
-	# Mark each square in targets with a proper marker and flag it as moveable
+	# Mark each square in targets with a proper marker sprite and flag it as moveable
 	for t in pieceTargets[MOVE]:
 		t.setTarget(MOVE)
 	for t in pieceTargets[ATTACK]:
@@ -179,7 +179,7 @@ func select():
 func _reset_world_pos() -> void:
 	target_pos = WORLD_POS
 
-# Reset sprite position when another piece is clicked
+# Reset sprite position and clear selection when another piece is selected
 func _any_piece_selected() -> void:
 	if !self.isHovered:
 		selected = false
