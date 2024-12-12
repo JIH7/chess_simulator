@@ -166,6 +166,7 @@ func _input(event) -> void:
 
 func select():
 	selected = true
+	print(_currentPiece.findPins(coordinates, board))
 	pieceTargets = _currentPiece.checkMoves(coordinates, board)
 	target_pos = WORLD_POS + Vector2(0, -7)
 
