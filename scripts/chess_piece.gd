@@ -32,8 +32,8 @@ func findChecks(position: Vector2i, board: Node2D) -> Array:
 
 # Returns the directional vector of a piece pinning this piece to the king
 func findPins(position: Vector2i, board: Node2D) -> Vector2i:
-	for y in range(-1, 1, 2):
-		for x in range(-1, 1, 2):
+	for y in range(-1, 2):
+		for x in range(-1, 2):
 			if x == 0 && y == 0:
 				continue
 
@@ -47,18 +47,22 @@ func findPins(position: Vector2i, board: Node2D) -> Vector2i:
 					if targetPiece != null:
 						hasTarget = false # Piece can only be pinned from one direction
 
-						if targetPiece.pieceAbrev == "K":
+						if targetPiece.pieceAbrev == "K" && targetPiece.color == self.color:
 							checkCoords = position
 
 							while inBounds(checkCoords):
 								checkCoords -= Vector2i(x, y)
+								if !inBounds(checkCoords):
+									break
 
-								targetPiece = board.getPiece(checkCoords).getPiece()
+								targetPiece = board.getSquare(checkCoords).getPiece()
+								if targetPiece == null:
+									continue
 								if x == 0 || y == 0:
-									if targetPiece.pieceAbrev == "R" || targetPiece.pieceAbrev == "Q":
+									if (targetPiece.pieceAbrev == "R" || targetPiece.pieceAbrev == "Q") && targetPiece.color != self.color:
 										return Vector2i(x, y)
 								else:
-									if targetPiece.pieceAbrev == "B" || targetPiece.pieceAbrev == "Q":
+									if (targetPiece.pieceAbrev == "B" || targetPiece.pieceAbrev == "Q") && targetPiece.color != self.color:
 										return Vector2i(x, y)
 									
 				else: # Exit loop at edge of board
