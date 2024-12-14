@@ -3,7 +3,7 @@ extends Node2D
 var grid: Array
 var squareScene: PackedScene
 
-var moveLedger: Array
+var moveLedger: Array # Stores the game sequence in algebraic notation
 
 func _ready() -> void:
 	grid = Array()

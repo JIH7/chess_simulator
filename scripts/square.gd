@@ -32,12 +32,13 @@ func _ready() -> void:
 	SignalBus.connect("move_here", self._move_piece)
 
 func initialize(x: int, y: int, chessBoard: Node2D) -> void:
-	# Called by board when square is instantiated
+	# Pseudo-Constructor Called by board when square is instantiated
 	coordinates = Vector2i(x, y)
 	WORLD_POS = _sprite.position
 	target_pos = _sprite.position
 	board = chessBoard
 
+	# Turn X coordinate into algebraic equivalent
 	if x == 0:
 		_algebraicCoords += "a"
 	elif x == 1:
@@ -131,7 +132,7 @@ func setSprite(piece: ChessPiece) -> void:
 
 func _on_mouse_enter() -> void:
 	if !selected && _currentPiece != null:
-		if SignalBus.actionState == _currentPiece.color: # Lockout selection hover during the other player's turn and during animations
+		if SignalBus.actionState == _currentPiece.color && _currentPiece.hasMoves(coordinates, board): # Lockout selection hover during the other player's turn and during animations, or if the piece has no valid moves
 			target_pos = WORLD_POS + Vector2(0, -4)
 	isHovered = true
 
@@ -154,6 +155,10 @@ func _input(event) -> void:
 				# Enforce turn order and prevent simultaneous moves
 				if SignalBus.actionState != _currentPiece.color:
 					return
+
+				# Disallow selection if no legal moves are available
+				if !_currentPiece.hasMoves(coordinates, board):
+					return
 				# Select piece, clear other selections, clear targets
 				SignalBus.emit_signal("clear_targets")
 				SignalBus.emit_signal("piece_selected")
@@ -164,6 +169,7 @@ func _input(event) -> void:
 				SignalBus.emit_signal("clear_targets")
 				_reset_world_pos()
 
+# Logic for selecting the current piece
 func select():
 	selected = true
 	print(_currentPiece.findPins(coordinates, board))

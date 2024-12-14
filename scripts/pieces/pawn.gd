@@ -11,12 +11,13 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 
 	var x = position.x
 	var y = position.y
+	var pin: Vector2i = findPins(position, board);
 
 	# Pawns need to check moves based on color since they only move forwards
 	if color == WHITE:
 		var targetSquare = board.getSquare(Vector2i(x, y + 1))
 		# Check one square ahead
-		if targetSquare.getPiece() == null:
+		if targetSquare.getPiece() == null && pin.x == 0: # Check square ahead is open and not horizontally/diagonally pinned
 			moveTargets.append(targetSquare)
 			# Check for a valid double step move
 			if !hasMoved:
@@ -36,7 +37,7 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	if color == BLACK:
 		var targetSquare = board.getSquare(Vector2i(x, y - 1))
 		# Check one square ahead
-		if targetSquare.getPiece() == null:
+		if targetSquare.getPiece() == null && pin.x == 0: # Check square ahead is open and not horizontally/diagonally pinned
 			moveTargets.append(targetSquare)
 			# Check for valid double step move
 			if !hasMoved:
