@@ -65,13 +65,17 @@ func findPins(position: Vector2i, board: Node2D) -> Vector2i:
 									continue
 								elif targetPiece.color == color:
 									return Vector2i(0, 0)
-								
+
 								if x == 0 || y == 0: # Check orthogonally for Rooks and Queens
 									if (targetPiece.pieceAbrev == "R" || targetPiece.pieceAbrev == "Q") && targetPiece.color != self.color:
 										return Vector2i(-x, -y)
+									else:
+										break
 								else: # Check diagonally for Bishops and Queens
 									if (targetPiece.pieceAbrev == "B" || targetPiece.pieceAbrev == "Q") && targetPiece.color != self.color:
 										return Vector2i(-x, -y)
+									else:
+										break
 										
 				else: # Exit loop at edge of board
 					hasTarget = false
