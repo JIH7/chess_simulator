@@ -17,6 +17,7 @@ var _algebraicCoords: String = ""
 
 # Variables for displacing sprite
 var WORLD_POS: Vector2
+var HOVER_OFFSET: Vector2 = Vector2(0, -4)
 var target_pos: Vector2
 
 # Variabls for managing hovers and selection
@@ -30,6 +31,7 @@ func _ready() -> void:
 	SignalBus.connect("piece_selected", self._any_piece_selected)
 	SignalBus.connect("clear_targets", self._clear_target)
 	SignalBus.connect("move_here", self._move_piece)
+	SignalBus.connect("move_complete", self._change_turns)
 
 func initialize(x: int, y: int, chessBoard: Node2D) -> void:
 	# Pseudo-Constructor Called by board when square is instantiated
@@ -133,7 +135,7 @@ func setSprite(piece: ChessPiece) -> void:
 func _on_mouse_enter() -> void:
 	if !selected && _currentPiece != null:
 		if SignalBus.actionState == _currentPiece.color && _currentPiece.hasMoves(coordinates, board): # Lockout selection hover during the other player's turn and during animations, or if the piece has no valid moves
-			target_pos = WORLD_POS + Vector2(0, -4)
+			target_pos = WORLD_POS + HOVER_OFFSET
 	isHovered = true
 
 func _on_mouse_exit() -> void:
@@ -172,7 +174,6 @@ func _input(event) -> void:
 # Logic for selecting the current piece
 func select():
 	selected = true
-	print(_currentPiece.findPins(coordinates, board))
 	pieceTargets = _currentPiece.checkMoves(coordinates, board)
 	target_pos = WORLD_POS + Vector2(0, -7)
 
@@ -231,7 +232,7 @@ func _move_piece(newSquare, isCapturing) -> void:
 	target_pos = Vector2(target_x, target_y)
 
 # Called when destination square reached. Transfers piece to the new square and resets sprite.
-func _move_finished():
+func _move_finished() -> void:
 	selected = false
 	self._currentPiece.hasMoved = true # hasMoved flag for pawn double step and castle check
 	# Transfer piece and clear flags
@@ -242,3 +243,9 @@ func _move_finished():
 	target_pos = WORLD_POS
 	_sprite.position = WORLD_POS #Instantly snap back sprite
 	SignalBus.emit_signal("move_complete") # Signal to pass turn
+
+func _change_turns() -> void: # If this piece is hovered while actionable, apply hover effect
+	if _currentPiece != null:
+		if isHovered && SignalBus.actionState == _currentPiece.color:
+			if _currentPiece.hasMoves(coordinates, board):
+				target_pos = WORLD_POS + HOVER_OFFSET

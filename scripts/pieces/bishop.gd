@@ -10,11 +10,16 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	var moveTargets = Array()
 	var captureTargets = Array()
 
+	var pin = findPins(position, board)
+
 	# Innermost loop should be reached 4 total times to sweep each diagonal vector
 	for y in range(-1, 2, 2):
 		for x in range(-1, 2, 2):
 			var hasNext = true
 			var checkCoords = position
+
+			if !(pin == Vector2i(0, 0) || pin == Vector2i(x, y) || pin == Vector2i(-x, -y)):
+				continue 
 			while hasNext:
 				checkCoords += Vector2i(x, y)
 

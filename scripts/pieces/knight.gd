@@ -10,6 +10,9 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
     var moveTargets = Array()
     var captureTargets = Array()
 
+    if findPins(position, board) != Vector2i(0, 0):
+        return [moveTargets, captureTargets] # Knights never have a legal move when pinned so we can return here
+
     for y in range(-1, 2, 2):
         for x in range(-1, 2, 2):
             var targetSquare

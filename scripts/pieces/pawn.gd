@@ -27,12 +27,12 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 		# Check to the left, avoiding index out of bounds
 		if x > 0:
 			targetSquare = board.getSquare(Vector2i(x - 1, y + 1))
-			if canCaptureTarget(targetSquare):
+			if canCaptureTarget(targetSquare) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, 1)):
 				captureTargets.append(targetSquare)
 		# Check to the right
 		if x < 7:
 			targetSquare = board.getSquare(Vector2i(x + 1, y + 1))
-			if canCaptureTarget(targetSquare):
+			if canCaptureTarget(targetSquare) && (pin == Vector2i(0, 0) || pin == Vector2i(1, 1)):
 				captureTargets.append(targetSquare)
 	if color == BLACK:
 		var targetSquare = board.getSquare(Vector2i(x, y - 1))
@@ -47,12 +47,12 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 		# Check to the left, avoiding index out of bounds
 		if x > 0:
 			targetSquare = board.getSquare(Vector2i(x - 1, y - 1))
-			if canCaptureTarget(targetSquare):
+			if canCaptureTarget(targetSquare) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, -1)):
 				captureTargets.append(targetSquare)
 		# Check to the right
 		if x < 7:
 			targetSquare = board.getSquare(Vector2i(x + 1, y - 1))
-			if canCaptureTarget(targetSquare):
+			if canCaptureTarget(targetSquare) && (pin == Vector2i(0, 0) || pin == Vector2i(1, -1)):
 				captureTargets.append(targetSquare)
 	var output = Array()
 	output.append(moveTargets)

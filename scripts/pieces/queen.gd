@@ -11,11 +11,17 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
     var captureTargets = Array()
     var targetSquare
 
+    var pin = findPins(position, board)
+
 	# Checks 8 vectors, skipping (0, 0)
     for y in range(-1, 2, 1):
         for x in range(-1, 2, 1):
             if x == 0 && y == 0:
                 continue
+
+            if pin != Vector2i(0, 0) && pin != Vector2i(x, y) && pin != Vector2i(-x, -y):
+                continue
+            
             var hasNext = true
             var checkCoords = position
             while hasNext:
