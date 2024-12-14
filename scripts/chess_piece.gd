@@ -18,20 +18,19 @@ func getColor() -> String:
 	else:
 		return "Black"
 
-func toString() -> String:
-	return self.getColor() + " " + pieceName
-
-func checkMoves(position: Vector2i, board: Node2D) -> Array:
-	return Array()
-
+# Returns true if the piece has at least one legal move
 func hasMoves(position: Vector2i, board: Node2D) -> bool:
 	var validMoves: Array = checkMoves(position, board)
 	return (validMoves[0].size() > 0 || validMoves[1].size() > 0)
 
-func controlSquare(position: Vector2i, board: Node2D) -> Array:
+# Implement these functions in classes that inherit from this one
+func checkMoves(_position: Vector2i, _board: Node2D) -> Array:
 	return Array()
 
-func findChecks(position: Vector2i, board: Node2D) -> Array:
+func controlSquare(_position: Vector2i, _board: Node2D) -> Array:
+	return Array()
+
+func findChecks(_position: Vector2i, _board: Node2D) -> Array:
 	return Array()
 
 # Returns the directional vector of a piece pinning this piece to the king

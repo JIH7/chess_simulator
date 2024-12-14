@@ -1,5 +1,10 @@
 extends Node
 
+"""
+This file represents a square on the chess board. Currently, I feel that squares may handle too much
+of the game logic. A refactor may be wise to move some of this logic elsewhere.
+"""
+
 # Node references
 @onready var _sprite: Sprite2D = $PieceSprite
 @onready var _targetSprite: Sprite2D = $TargetSprite
