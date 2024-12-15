@@ -1,5 +1,8 @@
 class_name ChessPiece
 
+"""This is a base class for different chess piece types. It contains
+information on each piece and corresponding logic."""
+
 var pieceName: String
 var pieceAbrev: String = ""
 enum {WHITE, BLACK}
@@ -89,5 +92,26 @@ func canCaptureTarget(square: Node2D) -> bool:
 			return true
 	return false
 
+func getTargetList(position: Vector2i, board: Node2D) -> Array:
+	var targets: Array = checkMoves(position, board)[1]
+	var outPut: Array = Array()
+	
+	for t in targets:
+		outPut.append(t.getPiece().pieceAbrev)
+
+	return outPut
+
 func inBounds(coords: Vector2i) -> bool:
 	return (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <=7)
+
+func validateTarget() -> bool:
+	if (SignalBus.checks.size() == 0):
+		return true
+	elif (SignalBus.checks.size() > 1):
+		return false
+	else:
+		var attacker: ChessPiece = SignalBus.checks[0]
+		if attacker.pieceName == "Knight" || attacker.pieceName == "Pawn":
+			return false
+		
+	return true

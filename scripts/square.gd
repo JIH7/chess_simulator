@@ -18,6 +18,7 @@ var target_state: int = -1
 
 var board: Node2D
 var coordinates: Vector2i
+# This value is set in initialize and used for recording games
 var _algebraicCoords: String = ""
 
 # Variables for displacing sprite
@@ -31,6 +32,7 @@ var isHovered: bool = false
 # Valid movement squares. Array contains two sub-arrays, move targets and attack targets
 var pieceTargets: Array
 
+"""Ready method just connects signals to the SignalBus for now"""
 func _ready() -> void:
 	# Connect signals
 	SignalBus.connect("piece_selected", self._any_piece_selected)
@@ -38,8 +40,8 @@ func _ready() -> void:
 	SignalBus.connect("move_here", self._move_piece)
 	SignalBus.connect("move_complete", self._change_turns)
 
+"""Pseudo-Constructor Called by board when square is instantiated"""
 func initialize(x: int, y: int, chessBoard: Node2D) -> void:
-	# Pseudo-Constructor Called by board when square is instantiated
 	coordinates = Vector2i(x, y)
 	WORLD_POS = _sprite.position
 	target_pos = _sprite.position
@@ -65,6 +67,7 @@ func initialize(x: int, y: int, chessBoard: Node2D) -> void:
 
 	_algebraicCoords += str(y+1)
 
+"""Process used to handle sprite movements and detect when piece movements are finished"""
 func _process(delta) -> void:
 	if target_pos != _sprite.position:
 		_sprite.position = _sprite.position.lerp(target_pos, delta * 14)
@@ -73,22 +76,22 @@ func _process(delta) -> void:
 		if target_pos.distance_to(_sprite.position) < .5:
 			_move_finished()
 			
-# Piece accessor
+"""Accessor method to retrieve _currentPiece"""
 func getPiece() -> ChessPiece:
 	return _currentPiece
 
-# Piece setter
+"""Mutator to set the value of _currentPiece"""
 func setPiece(newPiece: ChessPiece) -> void:
 	_currentPiece = newPiece
 	setSprite(newPiece)
 
-# Returns coordinates in algebraic notation
+"""Returns a coordinates string in algebraic notation"""
 func getCoords() -> String:
 	return _algebraicCoords
 
 # Sprite Management
 
-# Filepath constants
+# Filepath constants for different textures
 const PAWN_W = "res://assets/chess/white_pawn.png"
 const PAWN_B = "res://assets/chess/black_pawn.png"
 const BISHOP_W = "res://assets/chess/white_bishop.png"
@@ -105,7 +108,7 @@ const KING_B = "res://assets/chess/black_king.png"
 const MOVE_TARGET = "res://assets/chess/selection_dot.png"
 const ATTACK_TARGET = "res://assets/chess/selection_target.png"
 
-# Called by setPiece to update the sprite
+"""Called by setPiece to update the sprite"""
 func setSprite(piece: ChessPiece) -> void:
 	if piece == null:
 		_sprite.texture = null
@@ -136,19 +139,20 @@ func setSprite(piece: ChessPiece) -> void:
 		if piece.pieceName == "King":
 			_sprite.texture = preload(KING_B)
 
-
+"""Flags square as hovered and moves the piece slightly to provide feedback that it is selectable"""
 func _on_mouse_enter() -> void:
 	if !selected && _currentPiece != null:
 		if SignalBus.actionState == _currentPiece.color && _currentPiece.hasMoves(coordinates, board): # Lockout selection hover during the other player's turn and during animations, or if the piece has no valid moves
-			target_pos = WORLD_POS + HOVER_OFFSET
+			target_pos = WORLD_POS + HOVER_OFFSET # Piece lerps towards target_pos in _process()
 	isHovered = true
 
+"""Flags the square as not hovered and resets the sprite position if it was displaced in _on_mouse_enter"""
 func _on_mouse_exit() -> void:
 	if !selected:
 		_reset_world_pos()
 	isHovered = false
 
-# Currently only clicks are handled
+"""Input handling, currently only uses left click. Handles several cases depending on selection state and game state."""
 func _input(event) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed && self.isHovered:
@@ -176,7 +180,7 @@ func _input(event) -> void:
 				SignalBus.emit_signal("clear_targets")
 				_reset_world_pos()
 
-# Logic for selecting the current piece
+"""Flags this square as selected, retrieves a list of legal moves, and flags the corresponding squares as moveable"""
 func select():
 	selected = true
 	pieceTargets = _currentPiece.checkMoves(coordinates, board)
@@ -188,17 +192,17 @@ func select():
 	for t in pieceTargets[ATTACK]:
 		t.setTarget(ATTACK)
 
-# Reset sprite position within square
+"""Reset sprite position within square"""
 func _reset_world_pos() -> void:
 	target_pos = WORLD_POS
 
-# Reset sprite position and clear selection when another piece is selected
+"""Reset sprite position and clear selection when another piece is selected"""
 func _any_piece_selected() -> void:
 	if !self.isHovered:
 		selected = false
 		_reset_world_pos()
 
-# Flag this square as a move or capture target
+"""Flag this square as a move or capture target"""
 func setTarget(type: int):
 	target_state = type
 	if type == MOVE:
@@ -206,7 +210,7 @@ func setTarget(type: int):
 	elif type == ATTACK:
 		_targetSprite.texture = preload(ATTACK_TARGET)
 
-# Unflag self and clear target sprite
+"""Unflag self and clear target sprite"""
 func _clear_target() -> void:
 	_targetSprite.texture = null
 	target_state = -1
@@ -214,7 +218,7 @@ func _clear_target() -> void:
 # Movement helper variables
 var _moving_squares: bool = false
 var destination: Node2D = null
-# Flags this square as moving and animates piece to the target square
+"""Flags this square as moving and animates piece to the target square"""
 func _move_piece(newSquare, isCapturing) -> void:
 	if !selected:
 		return
@@ -236,21 +240,68 @@ func _move_piece(newSquare, isCapturing) -> void:
 	var target_y = (newSquare.position.y - self.position.y) 
 	target_pos = Vector2(target_x, target_y)
 
-# Called when destination square reached. Transfers piece to the new square and resets sprite.
+"""Called when destination square reached. Transfers piece to the new square and resets sprite."""
 func _move_finished() -> void:
+	SignalBus.clearChecks()
+
 	selected = false
 	self._currentPiece.hasMoved = true # hasMoved flag for pawn double step and castle check
 	# Transfer piece and clear flags
 	_moving_squares = false
 	destination.setPiece(self._currentPiece)
-	destination = null
-	self.setPiece(null) 
+	self.setPiece(null)
+
+	var piece = destination.getPiece()
+	if piece.pieceAbrev == "K":
+		SignalBus.setKing(piece.color, destination)
+
+	if destination.getTargetList().has("K"):
+		SignalBus.checks.append(destination)
+
+	var disc = discoverChecks(piece.color)
+	if disc != null:
+		SignalBus.checks.append(disc)
+
 	target_pos = WORLD_POS
-	_sprite.position = WORLD_POS #Instantly snap back sprite
+	_sprite.position = WORLD_POS # Instantly snap back sprite
+	destination = null # Drop reference to destination square
 	SignalBus.emit_signal("move_complete") # Signal to pass turn
 
-func _change_turns() -> void: # If this piece is hovered while actionable, apply hover effect
+"""Handles a case where this square is hovered while not selectable, but then becomes selectable"""
+func _change_turns() -> void:
 	if _currentPiece != null:
 		if isHovered && SignalBus.actionState == _currentPiece.color:
 			if _currentPiece.hasMoves(coordinates, board):
 				target_pos = WORLD_POS + HOVER_OFFSET
+
+"""Detect when a piece in this square moves, giving a friendly piece it was blocking check on the opposing king"""
+func discoverChecks(color: int) -> Node2D:
+	var king = SignalBus.getKing(ChessPiece.BLACK if color == ChessPiece.WHITE else ChessPiece.WHITE)
+	var dir = SignalBus.getDirection(coordinates, king.coordinates)
+
+	if dir == Vector2(0, 0):
+		return null
+
+	var targetCoords = Vector2(coordinates.x, coordinates.y) - dir
+	while inBounds(targetCoords):
+		var targetSquare = board.getSquare(targetCoords)
+		if targetSquare.getPiece() != null:
+			if targetSquare.getTargetList().has("K"):
+				return targetSquare
+			else:
+				return null
+
+	return null
+
+"""Calls the getTargetList method of _currentPiece and returns the result"""
+func getTargetList() -> Array:
+	return _currentPiece.getTargetList(coordinates, board)
+
+func isDiagonal(dir: Vector2):
+	if abs(dir.x) == abs(dir.y):
+		return true
+	else:
+		return false
+
+func inBounds(coords: Vector2i) -> bool:
+	return (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <=7)

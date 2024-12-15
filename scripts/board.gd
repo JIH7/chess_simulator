@@ -23,6 +23,7 @@ func _ready() -> void:
 			_populateSquare(newSquare)
 
 		grid.append(row.duplicate())
+	
 
 # Initializes the board with a standard chess layout
 func _populateSquare(square) -> void:
@@ -37,6 +38,7 @@ func _populateSquare(square) -> void:
 			square.setPiece(Queen.new(ChessPiece.WHITE))
 		elif square.coordinates.x == 4:
 			square.setPiece(King.new(ChessPiece.WHITE))
+			SignalBus.kings[ChessPiece.WHITE] = square
 	elif square.coordinates.y == 1:
 		square.setPiece(Pawn.new(ChessPiece.WHITE))
 	elif square.coordinates.y == 7:
@@ -50,6 +52,7 @@ func _populateSquare(square) -> void:
 			square.setPiece(Queen.new(ChessPiece.BLACK))
 		elif square.coordinates.x == 4:
 			square.setPiece(King.new(ChessPiece.BLACK))
+			SignalBus.kings[ChessPiece.BLACK] = square
 	elif square.coordinates.y == 6:
 		square.setPiece(Pawn.new(ChessPiece.BLACK))
 
