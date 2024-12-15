@@ -32,6 +32,8 @@ var isHovered: bool = false
 # Valid movement squares. Array contains two sub-arrays, move targets and attack targets
 var pieceTargets: Array
 
+var canEnPassant: bool = false
+
 """Ready method just connects signals to the SignalBus for now"""
 func _ready() -> void:
 	# Connect signals
@@ -224,6 +226,7 @@ var _moving_squares: bool = false
 var destination: Node2D = null
 """Flags this square as moving and animates piece to the target square"""
 func _move_piece(newSquare, isCapturing) -> void:
+	canEnPassant = false
 	if !selected:
 		return
 
@@ -232,12 +235,20 @@ func _move_piece(newSquare, isCapturing) -> void:
 		dirSign = dirSign / abs(dirSign)
 		_currentPiece.castle(dirSign, board.getSquare(newSquare.coordinates + Vector2i(dirSign, 0)), board)
 
+	if _currentPiece.pieceName == "Pawn" && abs(newSquare.coordinates.y - coordinates.y) > 1:
+		var passedSquare = board.getSquare(Vector2i(coordinates.x, coordinates.y + (newSquare.coordinates.y - coordinates.y) / 2))
+		passedSquare.canEnPassant = true
+		print(str(passedSquare.getCoords()) + " can be passed.")
+
 	# Record move
 	destination = newSquare
 	if !isCapturing:
 		board.addMove(_currentPiece.pieceAbrev + newSquare.getCoords())
 	else:
 		board.addMove(_currentPiece.pieceAbrev + "x" + newSquare.getCoords())
+
+		if destination.getPiece() == null:
+			board.getSquare(Vector2i(destination.coordinates.x, coordinates.y + (newSquare.coordinates.y - coordinates.y) / 2)).setPiece(null)
 
 	SignalBus.emit_signal("clear_targets")
 	if isCapturing: # Capture piece at target square. ToDo, add captured piece to points
