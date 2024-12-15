@@ -45,7 +45,7 @@ func setKing(color: int, square: Node2D):
 	kings[color] = square
 
 func getDirection(pos1: Vector2, pos2: Vector2) -> Vector2:
-	var dir = Vector2(pos1.x, pos2.y).direction_to(Vector2(pos2.x, pos2.y))
+	var dir = Vector2(pos1.x, pos1.y).direction_to(Vector2(pos2.x, pos2.y))
 	
 	if abs(dir.x) == abs(dir.y):
 		dir.x = dir.x / abs(dir.x)

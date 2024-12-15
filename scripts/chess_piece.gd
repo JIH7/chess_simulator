@@ -104,14 +104,55 @@ func getTargetList(position: Vector2i, board: Node2D) -> Array:
 func inBounds(coords: Vector2i) -> bool:
 	return (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <=7)
 
-func validateTarget() -> bool:
+func validateTarget(position: Vector2i) -> bool:
+	var friendlyKing: Node2D = SignalBus.getKing(color)
+	print("Validating " + str(position))
 	if (SignalBus.checks.size() == 0):
+		print("No checks, move valid.")
 		return true
 	elif (SignalBus.checks.size() > 1):
+		print("Multiple checks, move invalid")
 		return false
 	else:
-		var attacker: ChessPiece = SignalBus.checks[0]
-		if attacker.pieceName == "Knight" || attacker.pieceName == "Pawn":
+		print("One check...")
+		var attacker: Node = SignalBus.checks[0]
+		var attackDir: Vector2 = SignalBus.getDirection(attacker.coordinates, friendlyKing.coordinates)
+		if position == attacker.coordinates:
+			print("Move captures the attacking piece. Valid.")
+			return true
+		elif attacker.getPiece().pieceName == "Knight" || attacker.getPiece().pieceName == "Pawn":
+			print("Invalid, knights and pawns may not be blocked")
 			return false
-		
+		elif attackDir.x == 0 || attackDir.y == 0:
+			print("Attack direction: " + str(attackDir))
+			if isBetween(attacker.coordinates, friendlyKing.coordinates, position) && (attacker.getPiece().pieceAbrev == "R" || attacker.getPiece().pieceAbrev == "Q"):
+				print("Valid, move blocks rook or queen")
+				return true
+			else:
+				print("Invalid, does not block rook or queen")
+				return false
+		else:
+			if isBetween(attacker.coordinates, friendlyKing.coordinates, position) && (attacker.getPiece().pieceAbrev == "B" || attacker.getPiece().pieceAbrev == "Q"):
+				print("Valid, move blocks bishop or queen")
+				return true
+			else:
+				print("Invalid, does not block bishop or queen")
+				print(str(isBetween(attacker.coordinates, friendlyKing.coordinates, position)))
+				print(attacker.getPiece().pieceAbrev)
+				return false
+	
+	print ("Valid, end of method reached.")
 	return true
+
+func isBetween(start: Vector2i, end: Vector2i, target: Vector2i) -> bool:
+	if abs(start.x - end.x) == abs(start.y - end.y):
+		if abs(start.x - target.x) == abs(start.y - target.y):
+			if min(start.x, end.x) <= target.x && target.x <= max(start.x, end.x) && min(start.y, end.y) <= target.y && target.y <= max(start.y, end.y):
+				return true
+
+	if start.x == end.x || start.y == end.y:
+		if start.x == target.x || start.y == target.y:
+			if min(start.x, end.x) <= target.x && target.x <= max(start.x, end.x) && min(start.y, end.y) <= target.y && target.y <= max(start.y, end.y):
+				return true
+	
+	return false

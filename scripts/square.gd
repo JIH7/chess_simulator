@@ -274,7 +274,7 @@ func _change_turns() -> void:
 			if _currentPiece.hasMoves(coordinates, board):
 				target_pos = WORLD_POS + HOVER_OFFSET
 
-"""Detect when a piece in this square moves, giving a friendly piece it was blocking check on the opposing king"""
+"""Detect when a piece in this square moves, giving a friendly piece check on the opposing king"""
 func discoverChecks(color: int) -> Node2D:
 	var king = SignalBus.getKing(ChessPiece.BLACK if color == ChessPiece.WHITE else ChessPiece.WHITE)
 	var dir = SignalBus.getDirection(coordinates, king.coordinates)
@@ -290,7 +290,7 @@ func discoverChecks(color: int) -> Node2D:
 				return targetSquare
 			else:
 				return null
-
+		targetCoords -= dir
 	return null
 
 """Calls the getTargetList method of _currentPiece and returns the result"""

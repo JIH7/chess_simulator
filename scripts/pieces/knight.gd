@@ -31,6 +31,9 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
                 elif canCaptureTarget(targetSquare):
                     captureTargets.append(targetSquare)
 
+    moveTargets = moveTargets.filter(func(t: Node): return validateTarget(t.coordinates))
+    captureTargets = captureTargets.filter(func(t: Node): return validateTarget(t.coordinates))
+
     var output = Array()
     output.append(moveTargets)
     output.append(captureTargets)			
