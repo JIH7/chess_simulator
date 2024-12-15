@@ -1,6 +1,8 @@
 extends ChessPiece
 class_name King
 
+var _targetRooks: Array
+
 func _init(_color) -> void:
 	pieceName = "King"
 	pieceAbrev = "K"
@@ -10,6 +12,7 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	var moveTargets = Array()
 	var captureTargets = Array()
 
+	_targetRooks = Array()
 	var targetCoords
 	var targetSquare
 	for y in range(-1, 2):
@@ -24,6 +27,26 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 					moveTargets.append(targetSquare)
 				elif canCaptureTarget(targetSquare) && !squareIsAttacked:
 					captureTargets.append(targetSquare)
+
+	# Check for castle moves
+	if !hasMoved:
+		for x in range(-1, 2, 2):
+			targetCoords = position + Vector2i(x, 0)
+			while inBounds(targetCoords):
+				if abs(targetCoords.x - position.x) <= 2:
+					if checkSquare(targetCoords, board):
+						break
+				
+				targetSquare = board.getSquare(targetCoords)
+				if targetSquare.getPiece() != null:
+					if targetSquare.getPiece().pieceAbrev == "R" && !targetSquare.getPiece().hasMoved:
+						moveTargets.append(board.getSquare(position + Vector2i(x * 2, 0)))
+						_targetRooks.append(targetSquare)
+						break
+					else:
+						break
+
+				targetCoords += Vector2i(x, 0)
 
 	var output = Array()
 	output.append(moveTargets)
@@ -81,6 +104,11 @@ func checkSquare(position, board) -> bool:
 									break 
 							else:
 								break # If we encounter a piece that cannot attack diagonally, this direction is safe
-
-
 	return false
+
+func castle(dirSign: int, targetSquare: Node, board: Node):
+	for r in _targetRooks:
+		if r.coordinates.x == 0 && dirSign == -1:
+			r.rook_castle_move(board.getSquare(targetSquare.coordinates - Vector2i(dirSign * 2, 0)))
+		if r.coordinates.x == 7 && dirSign == 1:
+			r.rook_castle_move(board.getSquare(targetSquare.coordinates - Vector2i(dirSign * 2, 0)))

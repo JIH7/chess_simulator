@@ -55,15 +55,12 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 			if canCaptureTarget(targetSquare) && (pin == Vector2i(0, 0) || pin == Vector2i(1, -1)):
 				captureTargets.append(targetSquare)
 	var output = Array()
-
-	print("Filtering movelists")
 	
 	moveTargets = moveTargets.filter(func(t: Node): return validateTarget(t.coordinates))
 	captureTargets = captureTargets.filter(func(t: Node): return validateTarget(t.coordinates))
 
 	output.append(moveTargets)
 	output.append(captureTargets)
-	print(output.size())		
 	return output
 
 func findChecks(position: Vector2i, board: Node2D) -> Array:

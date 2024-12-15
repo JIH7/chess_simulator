@@ -75,6 +75,10 @@ func _process(delta) -> void:
 	if _moving_squares:
 		if target_pos.distance_to(_sprite.position) < .5:
 			_move_finished()
+
+	if _castling:
+		if target_pos.distance_to(_sprite.position) < .5:
+			_rook_castle_finished()
 			
 """Accessor method to retrieve _currentPiece"""
 func getPiece() -> ChessPiece:
@@ -223,6 +227,11 @@ func _move_piece(newSquare, isCapturing) -> void:
 	if !selected:
 		return
 
+	if _currentPiece.pieceAbrev == "K" && abs(newSquare.coordinates.x - coordinates.x) > 1:
+		var dirSign = newSquare.coordinates.x - coordinates.x
+		dirSign = dirSign / abs(dirSign)
+		_currentPiece.castle(dirSign, board.getSquare(newSquare.coordinates + Vector2i(dirSign, 0)), board)
+
 	# Record move
 	destination = newSquare
 	if !isCapturing:
@@ -239,6 +248,16 @@ func _move_piece(newSquare, isCapturing) -> void:
 	var target_x = (newSquare.position.x - self.position.x)
 	var target_y = (newSquare.position.y - self.position.y) 
 	target_pos = Vector2(target_x, target_y)
+
+var _castling: bool = false
+func rook_castle_move(newSquare) -> void:
+	destination = newSquare
+
+	_castling = true
+	var target_x = (newSquare.position.x - self.position.x)
+	var target_y = (newSquare.position.y - self.position.y)
+	target_pos = Vector2(target_x, target_y)
+
 
 """Called when destination square reached. Transfers piece to the new square and resets sprite."""
 func _move_finished() -> void:
@@ -266,6 +285,15 @@ func _move_finished() -> void:
 	_sprite.position = WORLD_POS # Instantly snap back sprite
 	destination = null # Drop reference to destination square
 	SignalBus.emit_signal("move_complete") # Signal to pass turn
+
+func _rook_castle_finished():
+	destination.setPiece(_currentPiece)
+	self.setPiece(null)
+	_castling = false
+
+	target_pos = WORLD_POS
+	_sprite.position = WORLD_POS
+	destination = null
 
 """Handles a case where this square is hovered while not selectable, but then becomes selectable"""
 func _change_turns() -> void:
