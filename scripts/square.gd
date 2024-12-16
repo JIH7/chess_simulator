@@ -288,6 +288,13 @@ func _move_finished() -> void:
 	self.setPiece(null)
 
 	var piece = destination.getPiece()
+
+	if piece.pieceName == "Pawn" && (destination.coordinates.y == 0 || destination.coordinates.y == 7):
+		var promotionMenu = board.openPromotionSelect(destination)
+		destination.setPiece(await promotionMenu.getSelectedPiece())
+		promotionMenu.queue_free()
+		
+
 	if piece.pieceAbrev == "K":
 		SignalBus.setKing(piece.color, destination)
 

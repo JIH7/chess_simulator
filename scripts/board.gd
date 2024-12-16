@@ -2,6 +2,7 @@ extends Node2D
 
 var grid: Array
 var squareScene: PackedScene # Prefab for a square on the chessboard
+var promotionSelectScene: PackedScene
 
 var moveLedger: Array # Stores the game sequence in algebraic notation
 
@@ -9,6 +10,8 @@ func _ready() -> void:
 	grid = Array()
 	moveLedger = Array()
 	squareScene = preload("res://prefabs/square.tscn")
+	promotionSelectScene = preload("res://prefabs/promotion_select.tscn")
+	
 
 	# Instantiate a grid of squares and move them to the proper coordinates
 	for y: int in range(8):
@@ -64,3 +67,9 @@ func getSquare(coordinates: Vector2i) -> Node2D:
 func addMove(move: String) -> void:
 	moveLedger.append(move)
 	print(move)
+
+func openPromotionSelect(square):
+	var promotionMenu = promotionSelectScene.instantiate()
+	add_child(promotionMenu)
+	promotionMenu.setColor(square.getPiece().color)
+	return promotionMenu

@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://co1v5wpl51gv0"]
+
+[ext_resource type="Script" path="res://scripts/promotion_select.gd" id="1_57tw5"]
+[ext_resource type="Texture2D" uid="uid://bh4vtkf7455tg" path="res://assets/chess/promotion_select.png" id="2_lc5iu"]
+[ext_resource type="Texture2D" uid="uid://dvcy85pdqbcjg" path="res://assets/chess/black_queen.png" id="3_5p7sa"]
+[ext_resource type="Texture2D" uid="uid://be0iq3utas26n" path="res://assets/chess/black_knight.png" id="4_g8if2"]
+[ext_resource type="Texture2D" uid="uid://c0eioq32beybd" path="res://assets/chess/black_rook.png" id="5_k1ekw"]
+[ext_resource type="Texture2D" uid="uid://cymtcucy88yk1" path="res://assets/chess/black_bishop.png" id="6_auxys"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_il3i5"]
+size = Vector2(71, 72)
+
+[node name="PromotionSelect" type="Node2D"]
+script = ExtResource("1_57tw5")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(2.6, 2.12)
+texture = ExtResource("2_lc5iu")
+
+[node name="Select" type="Node" parent="."]
+
+[node name="Queen" type="Node2D" parent="Select"]
+position = Vector2(-160, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Select/Queen"]
+scale = Vector2(3, 3)
+texture = ExtResource("3_5p7sa")
+
+[node name="Area2D" type="Area2D" parent="Select/Queen"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Select/Queen/Area2D"]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_il3i5")
+
+[node name="Knight" type="Node2D" parent="Select"]
+position = Vector2(-60, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Select/Knight"]
+scale = Vector2(3, 3)
+texture = ExtResource("4_g8if2")
+
+[node name="Area2D" type="Area2D" parent="Select/Knight"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Select/Knight/Area2D"]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_il3i5")
+
+[node name="Rook" type="Node2D" parent="Select"]
+position = Vector2(60, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Select/Rook"]
+scale = Vector2(3, 3)
+texture = ExtResource("5_k1ekw")
+
+[node name="Area2D" type="Area2D" parent="Select/Rook"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Select/Rook/Area2D"]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_il3i5")
+
+[node name="Bishop" type="Node2D" parent="Select"]
+position = Vector2(160, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Select/Bishop"]
+scale = Vector2(3, 3)
+texture = ExtResource("6_auxys")
+
+[node name="Area2D" type="Area2D" parent="Select/Bishop"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Select/Bishop/Area2D"]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_il3i5")
