@@ -97,8 +97,6 @@ func getCanEP() ->  bool:
 
 func setCanEP(val: bool) -> void:
 	canEnPassant = val
-	if _algebraicCoords == "d3" || _algebraicCoords == "d6":
-		print("Square " + getCoords() + "canEnPassant set to " + str(val))
 
 """Returns a coordinates string in algebraic notation"""
 func getCoords() -> String:
@@ -287,7 +285,6 @@ func _move_finished() -> void:
 	if _currentPiece.pieceName == "Pawn" && abs(destination.coordinates.y - coordinates.y) > 1:
 		var passedSquare = board.getSquare(Vector2i(coordinates.x, coordinates.y + (destination.coordinates.y - coordinates.y) / 2))
 		passedSquare.setCanEP(true)
-		print(str(passedSquare.getCoords()) + " can be passed. canEnPassant = " + str(passedSquare.getCanEP()))	
 
 	selected = false
 	self._currentPiece.hasMoved = true # hasMoved flag for pawn double step and castle check

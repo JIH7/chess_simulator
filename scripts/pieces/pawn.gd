@@ -32,13 +32,11 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	# Check to the left, avoiding index out of bounds
 	if x > 0:
 		targetSquare = board.getSquare(Vector2i(x - 1, y + moveDir))
-		print(targetSquare.getCoords() + " " + str(targetSquare.getCanEP()))
 		if (canCaptureTarget(targetSquare) || targetSquare.getCanEP()) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, moveDir)):
 			captureTargets.append(targetSquare)
 	# Check to the right
 	if x < 7:
 		targetSquare = board.getSquare(Vector2i(x + 1, y + moveDir))
-		print(targetSquare.getCoords() + " " + str(targetSquare.getCanEP()))
 		if (canCaptureTarget(targetSquare) || targetSquare.getCanEP()) && (pin == Vector2i(0, 0) || pin == Vector2i(1, moveDir)):
 			captureTargets.append(targetSquare)
 	var output = Array()

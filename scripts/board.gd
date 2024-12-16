@@ -7,6 +7,8 @@ var promotionSelectScene: PackedScene
 var moveLedger: Array # Stores the game sequence in algebraic notation
 
 func _ready() -> void:
+	SignalBus.connect("check_game_over", _check_game_over)
+
 	grid = Array()
 	moveLedger = Array()
 	squareScene = preload("res://prefabs/square.tscn")
@@ -73,3 +75,29 @@ func openPromotionSelect(square):
 	add_child(promotionMenu)
 	promotionMenu.setColor(square.getPiece().color)
 	return promotionMenu
+
+func _check_game_over():
+	var pieces: Array = _get_flattened_grid()
+	var legalMoveExists: bool = false
+	pieces = pieces.filter(func(square) -> bool: return square.getPiece() != null).filter(func(square) -> bool: return square.getPiece().color == SignalBus.activePlayer)
+	
+	for square in pieces:
+		var moveList = square.getPiece().checkMoves(square.coordinates, self)
+		if !(moveList[0].size() == 0 && moveList[1].size() == 0):
+			print(square.getPiece().pieceName + " on " + square.getCoords() + " has a legal move.")
+			legalMoveExists = true
+
+	if !legalMoveExists:
+		print("Game over")
+		if SignalBus.checks.size() != 0:
+			print("Checkmate")
+		else:
+			print("Stalemate")
+
+
+func _get_flattened_grid() -> Array:
+	var output = Array()
+	for y in grid:
+		for x in y:
+			output.append(x)
+	return output

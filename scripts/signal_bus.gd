@@ -9,6 +9,7 @@ enum {WHITE, BLACK, LOCKED}
 
 var actionState: int = WHITE
 var activePlayer: int = WHITE
+var legalMoveExists: bool
 
 var checks: Array
 var kings: Array
@@ -17,6 +18,7 @@ signal piece_selected
 signal clear_targets
 signal move_here
 signal move_complete
+signal check_game_over
 
 func _ready():
 	checks = Array()
@@ -36,6 +38,7 @@ func _changeTurns(): # Removes actionstate locks and advance turns
 		activePlayer = WHITE
 
 	emit_signal("clear_targets")
+	emit_signal("check_game_over")
 
 func addCheck(check: Node2D):
 	checks.append(check)
@@ -67,3 +70,5 @@ func getDirection(pos1: Vector2, pos2: Vector2) -> Vector2:
 		return dir
 	else:
 		return Vector2(0, 0)
+
+	

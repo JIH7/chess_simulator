@@ -29,7 +29,7 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 					captureTargets.append(targetSquare)
 
 	# Check for castle moves
-	if !hasMoved:
+	if !hasMoved && SignalBus.checks.size() == 0:
 		for x in range(-1, 2, 2):
 			targetCoords = position + Vector2i(x, 0)
 			while inBounds(targetCoords):
