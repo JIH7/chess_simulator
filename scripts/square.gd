@@ -240,8 +240,7 @@ var _moving_squares: bool = false
 var destination: Node2D = null
 """Flags this square as moving and animates piece to the target square"""
 func _move_piece(newSquare, isCapturing) -> void:
-	if (SignalBus.activePlayer == SignalBus.WHITE && coordinates.y == 1) || (SignalBus.activePlayer == SignalBus.BLACK && coordinates.y == 6):
-		setCanEP(false)
+	setCanEP(false)
 		
 	if !selected:
 		return
@@ -250,11 +249,6 @@ func _move_piece(newSquare, isCapturing) -> void:
 		var dirSign = newSquare.coordinates.x - coordinates.x
 		dirSign = dirSign / abs(dirSign)
 		_currentPiece.castle(dirSign, board.getSquare(newSquare.coordinates + Vector2i(dirSign, 0)), board)
-
-	if _currentPiece.pieceName == "Pawn" && abs(newSquare.coordinates.y - coordinates.y) > 1:
-		var passedSquare = board.getSquare(Vector2i(coordinates.x, coordinates.y + (newSquare.coordinates.y - coordinates.y) / 2))
-		passedSquare.setCanEP(true)
-		print(str(passedSquare.getCoords()) + " can be passed. canEnPassant = " + str(passedSquare.getCanEP()))
 
 	# Record move
 	destination = newSquare
@@ -290,6 +284,11 @@ func rook_castle_move(newSquare) -> void:
 func _move_finished() -> void:
 	SignalBus.clearChecks()
 
+	if _currentPiece.pieceName == "Pawn" && abs(destination.coordinates.y - coordinates.y) > 1:
+		var passedSquare = board.getSquare(Vector2i(coordinates.x, coordinates.y + (destination.coordinates.y - coordinates.y) / 2))
+		passedSquare.setCanEP(true)
+		print(str(passedSquare.getCoords()) + " can be passed. canEnPassant = " + str(passedSquare.getCanEP()))	
+
 	selected = false
 	self._currentPiece.hasMoved = true # hasMoved flag for pawn double step and castle check
 	# Transfer piece and clear flags
@@ -302,8 +301,7 @@ func _move_finished() -> void:
 	if piece.pieceName == "Pawn" && (destination.coordinates.y == 0 || destination.coordinates.y == 7):
 		var promotionMenu = board.openPromotionSelect(destination)
 		destination.setPiece(await promotionMenu.getSelectedPiece())
-		promotionMenu.queue_free()
-		
+		promotionMenu.queue_free()	
 
 	if piece.pieceAbrev == "K":
 		SignalBus.setKing(piece.color, destination)

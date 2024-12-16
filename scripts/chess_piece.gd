@@ -97,7 +97,8 @@ func getTargetList(position: Vector2i, board: Node2D) -> Array:
 	var outPut: Array = Array()
 	
 	for t in targets:
-		outPut.append(t.getPiece().pieceAbrev)
+		if t.getPiece() != null:
+			outPut.append(t.getPiece().pieceAbrev)
 
 	return outPut
 
