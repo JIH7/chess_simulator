@@ -5,6 +5,7 @@ var squareScene: PackedScene # Prefab for a square on the chessboard
 var promotionSelectScene: PackedScene
 
 var moveLedger: Array # Stores the game sequence in algebraic notation
+var repeatTracker: Array # Stores the board state since the last pawn move or piece capture
 
 func _ready() -> void:
 	SignalBus.connect("check_game_over", _check_game_over)
@@ -76,6 +77,24 @@ func openPromotionSelect(square):
 	promotionMenu.setColor(square.getPiece().color)
 	return promotionMenu
 
+func resetRepeatTracker():
+	repeatTracker = Array()
+	repeatTracker.append(_boardStateString())
+
+func appendRepeatTracker():
+	repeatTracker.append(_boardStateString())
+
+func repeatDraw():
+	var counts = {}
+	for i in repeatTracker:
+		if i in counts:
+			counts[i] += 1
+		else:
+			counts[i] = 1
+		if counts[i] == 3:
+			return true
+	return false
+
 func _check_game_over():
 	var pieces: Array = _get_flattened_grid()
 	var legalMoveExists: bool = false
@@ -84,16 +103,41 @@ func _check_game_over():
 	for square in pieces:
 		var moveList = square.getPiece().checkMoves(square.coordinates, self)
 		if !(moveList[0].size() == 0 && moveList[1].size() == 0):
-			print(square.getPiece().pieceName + " on " + square.getCoords() + " has a legal move.")
 			legalMoveExists = true
 
 	if !legalMoveExists:
 		print("Game over")
 		if SignalBus.checks.size() != 0:
 			print("Checkmate")
+			return
 		else:
 			print("Stalemate")
+			return
 
+	if repeatDraw():
+		print("Stalemate")
+		return
+	
+
+func _boardStateString():
+	var flattenedBoard: Array
+	var output: String = ""
+
+	flattenedBoard = _get_flattened_grid()
+	for i in flattenedBoard:
+		var piece = i.getPiece()
+
+		if piece == null:
+			output += "-"
+		elif piece.pieceName == "Pawn":
+			output += "p"
+		else:
+			output += piece.pieceAbrev
+
+	return output
+
+func _openGameOverScreen():
+	pass
 
 func _get_flattened_grid() -> Array:
 	var output = Array()

@@ -243,6 +243,11 @@ func _move_piece(newSquare, isCapturing) -> void:
 	if !selected:
 		return
 
+	if _currentPiece.pieceName == "Pawn":
+		board.resetRepeatTracker()
+	else:
+		board.appendRepeatTracker()
+
 	if _currentPiece.pieceAbrev == "K" && abs(newSquare.coordinates.x - coordinates.x) > 1:
 		var dirSign = newSquare.coordinates.x - coordinates.x
 		dirSign = dirSign / abs(dirSign)
