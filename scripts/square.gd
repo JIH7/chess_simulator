@@ -92,6 +92,14 @@ func setPiece(newPiece: ChessPiece) -> void:
 	_currentPiece = newPiece
 	setSprite(newPiece)
 
+func getCanEP() ->  bool:
+	return canEnPassant
+
+func setCanEP(val: bool) -> void:
+	canEnPassant = val
+	if _algebraicCoords == "d3" || _algebraicCoords == "d6":
+		print("Square " + getCoords() + "canEnPassant set to " + str(val))
+
 """Returns a coordinates string in algebraic notation"""
 func getCoords() -> String:
 	return _algebraicCoords
@@ -232,7 +240,9 @@ var _moving_squares: bool = false
 var destination: Node2D = null
 """Flags this square as moving and animates piece to the target square"""
 func _move_piece(newSquare, isCapturing) -> void:
-	canEnPassant = false
+	if (SignalBus.activePlayer == SignalBus.WHITE && coordinates.y == 1) || (SignalBus.activePlayer == SignalBus.BLACK && coordinates.y == 6):
+		setCanEP(false)
+		
 	if !selected:
 		return
 
@@ -243,8 +253,8 @@ func _move_piece(newSquare, isCapturing) -> void:
 
 	if _currentPiece.pieceName == "Pawn" && abs(newSquare.coordinates.y - coordinates.y) > 1:
 		var passedSquare = board.getSquare(Vector2i(coordinates.x, coordinates.y + (newSquare.coordinates.y - coordinates.y) / 2))
-		passedSquare.canEnPassant = true
-		print(str(passedSquare.getCoords()) + " can be passed.")
+		passedSquare.setCanEP(true)
+		print(str(passedSquare.getCoords()) + " can be passed. canEnPassant = " + str(passedSquare.getCanEP()))
 
 	# Record move
 	destination = newSquare

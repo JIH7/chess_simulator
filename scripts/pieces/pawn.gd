@@ -13,49 +13,34 @@ func checkMoves(position: Vector2i, board: Node2D) -> Array:
 	var y = position.y
 	var pin: Vector2i = findPins(position, board);
 
-	# Pawns need to check moves based on color since they only move forwards
+	var moveDir: int
 	if color == WHITE:
-		var targetSquare = board.getSquare(Vector2i(x, y + 1))
-		# Check one square ahead
-		if targetSquare.getPiece() == null && pin.x == 0: # Check square ahead is open and not horizontally/diagonally pinned
-			moveTargets.append(targetSquare)
-			# Check for a valid double step move
-			if !hasMoved:
-				targetSquare = board.getSquare(Vector2i(x, y + 2))
-				if targetSquare.getPiece() == null:
-					moveTargets.append(targetSquare)
-		# Check to the left, avoiding index out of bounds
-		if x > 0:
-			targetSquare = board.getSquare(Vector2i(x - 1, y + 1))
-			if (canCaptureTarget(targetSquare) || targetSquare.canEnPassant) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, 1)):
-				captureTargets.append(targetSquare)
-		# Check to the right
-		if x < 7:
-			targetSquare = board.getSquare(Vector2i(x + 1, y + 1))
-			if (canCaptureTarget(targetSquare) || targetSquare.canEnPassant) && (pin == Vector2i(0, 0) || pin == Vector2i(1, 1)):
-				captureTargets.append(targetSquare)
-	if color == BLACK:
-		var targetSquare = board.getSquare(Vector2i(x, y - 1))
-		# Check one square ahead
-		if targetSquare.getPiece() == null && pin.x == 0: # Check square ahead is open and not horizontally/diagonally pinned
-			moveTargets.append(targetSquare)
-			# Check for valid double step move
-			if !hasMoved:
-				targetSquare = board.getSquare(Vector2i(x, y - 2))
-				if targetSquare.getPiece() == null:
-					moveTargets.append(targetSquare)
-		# Check to the left, avoiding index out of bounds
-		if x > 0:
-			targetSquare = board.getSquare(Vector2i(x - 1, y - 1))
-			if (canCaptureTarget(targetSquare) || targetSquare.canEnPassant) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, -1)):
-				captureTargets.append(targetSquare)
-				print("En passant target added")
-		# Check to the right
-		if x < 7:
-			targetSquare = board.getSquare(Vector2i(x + 1, y - 1))
-			if (canCaptureTarget(targetSquare) || targetSquare.canEnPassant) && (pin == Vector2i(0, 0) || pin == Vector2i(1, -1)):
-				captureTargets.append(targetSquare)
-				print("En passant target added")
+		moveDir = 1
+	else:
+		moveDir = -1
+
+	# Pawns need to check moves based on color since they only move forwards
+	var targetSquare = board.getSquare(Vector2i(x, y + moveDir))
+	# Check one square ahead
+	if targetSquare.getPiece() == null && pin.x == 0: # Check square ahead is open and not horizontally/diagonally pinned
+		moveTargets.append(targetSquare)
+		# Check for a valid double step move
+		if !hasMoved:
+			targetSquare = board.getSquare(Vector2i(x, y + (2 * moveDir)))
+			if targetSquare.getPiece() == null:
+				moveTargets.append(targetSquare)
+	# Check to the left, avoiding index out of bounds
+	if x > 0:
+		targetSquare = board.getSquare(Vector2i(x - 1, y + moveDir))
+		print(targetSquare.getCoords() + " " + str(targetSquare.getCanEP()))
+		if (canCaptureTarget(targetSquare) || targetSquare.getCanEP()) && (pin == Vector2i(0, 0) || pin == Vector2i(-1, 1)):
+			captureTargets.append(targetSquare)
+	# Check to the right
+	if x < 7:
+		targetSquare = board.getSquare(Vector2i(x + 1, y + moveDir))
+		print(targetSquare.getCoords() + " " + str(targetSquare.getCanEP()))
+		if (canCaptureTarget(targetSquare) || targetSquare.getCanEP()) && (pin == Vector2i(0, 0) || pin == Vector2i(1, 1)):
+			captureTargets.append(targetSquare)
 	var output = Array()
 	
 	moveTargets = moveTargets.filter(func(t: Node): return validateTarget(t.coordinates))
