@@ -83,7 +83,10 @@ func checkSquare(position, board) -> bool:
 				var otherPiece: ChessPiece = board.getSquare(checkCoords).getPiece()
 				if otherPiece != null:
 					if otherPiece.color == color:
-						break
+						if otherPiece.pieceAbrev == "K":
+							continue # Treat self as an empty square so that bishops/rooks/queens can "laser" through the king
+						else:
+							break
 					else:
 						if x == 0 || y == 0: # Orthogonal directions
 							if otherPiece.pieceAbrev == "Q" || otherPiece.pieceAbrev == "R":

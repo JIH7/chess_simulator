@@ -35,8 +35,20 @@ func _changeTurns(): # Removes actionstate locks and advance turns
 		actionState = WHITE
 		activePlayer = WHITE
 
+	emit_signal("clear_targets")
+
+func addCheck(check: Node2D):
+	checks.append(check)
+	if check.getPiece().color == ChessPiece.WHITE:
+		kings[1].setTarget(Square.CHECK)
+	else:
+		kings[0].setTarget(Square.CHECK)
+
 func clearChecks():
 	checks = Array()
+
+func hasCheck() -> bool:
+	return checks.size() > 0
 
 func getKing(color: int) -> Node2D:
 	return kings[color]

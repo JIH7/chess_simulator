@@ -1,4 +1,5 @@
 extends Node
+class_name Square
 
 """
 This file represents a square on the chess board. Currently, I feel that squares may handle too much
@@ -12,7 +13,7 @@ of the game logic. A refactor may be wise to move some of this logic elsewhere.
 # Piece in this square
 var _currentPiece: ChessPiece = null
 
-enum {MOVE, ATTACK}
+enum {MOVE, ATTACK, CHECK}
 # If this square is being targeted and whether that's for a capture
 var target_state: int = -1
 
@@ -113,6 +114,7 @@ const KING_B = "res://assets/chess/black_king.png"
 
 const MOVE_TARGET = "res://assets/chess/selection_dot.png"
 const ATTACK_TARGET = "res://assets/chess/selection_target.png"
+const CHECK_TARGET = "res://assets/chess/check_target.png"
 
 """Called by setPiece to update the sprite"""
 func setSprite(piece: ChessPiece) -> void:
@@ -215,9 +217,13 @@ func setTarget(type: int):
 		_targetSprite.texture = preload(MOVE_TARGET)
 	elif type == ATTACK:
 		_targetSprite.texture = preload(ATTACK_TARGET)
+	elif type == CHECK:
+		_targetSprite.texture = preload(CHECK_TARGET)
 
 """Unflag self and clear target sprite"""
 func _clear_target() -> void:
+	if target_state == CHECK && SignalBus.hasCheck():
+		return
 	_targetSprite.texture = null
 	target_state = -1
 
@@ -286,11 +292,11 @@ func _move_finished() -> void:
 		SignalBus.setKing(piece.color, destination)
 
 	if destination.getTargetList().has("K"):
-		SignalBus.checks.append(destination)
+		SignalBus.addCheck(destination)
 
 	var disc = discoverChecks(piece.color)
 	if disc != null:
-		SignalBus.checks.append(disc)
+		SignalBus.addCheck(disc)
 
 	target_pos = WORLD_POS
 	_sprite.position = WORLD_POS # Instantly snap back sprite
