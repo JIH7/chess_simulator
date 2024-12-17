@@ -9,6 +9,7 @@ of the game logic. A refactor may be wise to move some of this logic elsewhere.
 # Node references
 @onready var _sprite: Sprite2D = $PieceSprite
 @onready var _targetSprite: Sprite2D = $TargetSprite
+@onready var _shader_material: ShaderMaterial = _sprite.material
 
 # Piece in this square
 var _currentPiece: ChessPiece = null
@@ -223,6 +224,7 @@ func setTarget(type: int):
 		_targetSprite.texture = preload(MOVE_TARGET)
 	elif type == ATTACK:
 		_targetSprite.texture = preload(ATTACK_TARGET)
+		_shader_material.set_shader_parameter("apply_effect", true)
 	elif type == CHECK:
 		_targetSprite.texture = preload(CHECK_TARGET)
 
@@ -232,6 +234,7 @@ func _clear_target() -> void:
 		return
 	_targetSprite.texture = null
 	target_state = -1
+	_shader_material.set_shader_parameter("apply_effect", false)
 
 # Movement helper variables
 var _moving_squares: bool = false

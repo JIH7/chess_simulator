@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cg768yibrgm1k"]
+[gd_scene load_steps=4 format=3 uid="uid://cg768yibrgm1k"]
 
 [ext_resource type="Script" path="res://scripts/square.gd" id="1_2awk8"]
+[ext_resource type="Material" uid="uid://bac3cqct5ameu" path="res://materials/chess_piece.tres" id="2_xr8s8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ujbq5"]
 
@@ -8,6 +9,7 @@
 script = ExtResource("1_2awk8")
 
 [node name="PieceSprite" type="Sprite2D" parent="."]
+material = ExtResource("2_xr8s8")
 scale = Vector2(3, 3)
 
 [node name="Area2D" type="Area2D" parent="."]
