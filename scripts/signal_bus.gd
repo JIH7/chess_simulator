@@ -26,6 +26,9 @@ func _ready():
 	connect("move_here", _lockOutPlayers)
 	connect("move_complete", _changeTurns)
 
+func lockGame():
+	_lockOutPlayers(0, 0)
+
 func _lockOutPlayers(_arg1, _arg2): # Function does not need argument, but the signal passes args for squares which need them
 	actionState = LOCKED
 

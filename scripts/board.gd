@@ -3,6 +3,7 @@ extends Node2D
 var grid: Array
 var squareScene: PackedScene # Prefab for a square on the chessboard
 var promotionSelectScene: PackedScene
+var gameOverScene: PackedScene
 
 var moveLedger: Array # Stores the game sequence in algebraic notation
 var repeatTracker: Array # Stores the board state since the last pawn move or piece capture
@@ -14,6 +15,7 @@ func _ready() -> void:
 	moveLedger = Array()
 	squareScene = preload("res://prefabs/square.tscn")
 	promotionSelectScene = preload("res://prefabs/promotion_select.tscn")
+	gameOverScene = preload("res://prefabs/GameOverScreen.tscn")
 	
 
 	# Instantiate a grid of squares and move them to the proper coordinates
@@ -106,18 +108,24 @@ func _check_game_over():
 			legalMoveExists = true
 
 	if !legalMoveExists:
-		print("Game over")
 		if SignalBus.checks.size() != 0:
-			print("Checkmate")
+			# This function is called after the active player changes, so we check the opposite player
+			_openGameOverScreen("Checkmate! " + ("White" if SignalBus.activePlayer == SignalBus.BLACK else "Black") + " wins!")
 			return
 		else:
-			print("Stalemate")
+			_openGameOverScreen("Stalemate. No legal moves.")
 			return
 
 	if repeatDraw():
-		print("Stalemate")
+		_openGameOverScreen("Stalemate. Repetition.")
 		return
-	
+
+func _openGameOverScreen(result: String):
+	SignalBus.lockGame()
+	var endScreen = gameOverScene.instantiate()
+	add_child(endScreen)
+	endScreen.setText(result)
+	print(result)
 
 func _boardStateString():
 	var flattenedBoard: Array
@@ -135,9 +143,6 @@ func _boardStateString():
 			output += piece.pieceAbrev
 
 	return output
-
-func _openGameOverScreen():
-	pass
 
 func _get_flattened_grid() -> Array:
 	var output = Array()
