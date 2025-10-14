@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bac3cqct5ameu"]
 
-[ext_resource type="Shader" path="res://materials/chess_piece.gdshader" id="1_trplv"]
+[ext_resource type="Shader" uid="uid://fc1jiwq5s0oe" path="res://materials/chess_piece.gdshader" id="1_trplv"]
 
 [resource]
 resource_local_to_scene = true

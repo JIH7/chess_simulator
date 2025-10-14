@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://co1v5wpl51gv0"]
 
-[ext_resource type="Script" path="res://scripts/promotion_select.gd" id="1_57tw5"]
+[ext_resource type="Script" uid="uid://ckay424u6wemn" path="res://scripts/promotion_select.gd" id="1_57tw5"]
 [ext_resource type="Texture2D" uid="uid://bh4vtkf7455tg" path="res://assets/chess/promotion_select.png" id="2_lc5iu"]
 [ext_resource type="Texture2D" uid="uid://dvcy85pdqbcjg" path="res://assets/chess/black_queen.png" id="3_5p7sa"]
 [ext_resource type="Texture2D" uid="uid://be0iq3utas26n" path="res://assets/chess/black_knight.png" id="4_g8if2"]

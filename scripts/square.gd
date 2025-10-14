@@ -251,14 +251,22 @@ func _move_piece(newSquare, isCapturing) -> void:
 	else:
 		board.appendRepeatTracker()
 
+	# Remember if castling for when the move is recorded
+	var isCastling: bool = false
 	if _currentPiece.pieceAbrev == "K" && abs(newSquare.coordinates.x - coordinates.x) > 1:
 		var dirSign = newSquare.coordinates.x - coordinates.x
 		dirSign = dirSign / abs(dirSign)
 		_currentPiece.castle(dirSign, board.getSquare(newSquare.coordinates + Vector2i(dirSign, 0)), board)
+		isCastling = true
 
 	# Record move
 	destination = newSquare
-	if !isCapturing:
+	if isCastling:
+		if newSquare.coordinates.x == 6:
+			board.addMove("O-O")
+		else:
+			board.addMove("O-O-O")
+	elif !isCapturing:
 		board.addMove(_currentPiece.pieceAbrev + newSquare.getCoords())
 	else:
 		board.addMove(_currentPiece.pieceAbrev + "x" + newSquare.getCoords())

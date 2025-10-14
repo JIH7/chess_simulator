@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cixx2nvye07uh"]
 
 [ext_resource type="PackedScene" uid="uid://cif7rx82gf6ks" path="res://prefabs/board.tscn" id="1_hntds"]
-[ext_resource type="Shader" path="res://materials/background.gdshader" id="2_hvgc3"]
+[ext_resource type="Shader" uid="uid://jkple5i87b2w" path="res://materials/background.gdshader" id="2_hvgc3"]
 [ext_resource type="Texture2D" uid="uid://bhe7kssid5jg6" path="res://assets/chess/bg.png" id="3_g0xph"]
 [ext_resource type="Texture2D" uid="uid://ivd2lqi7qgag" path="res://assets/simplex_noise.tres" id="3_xgvux"]
 

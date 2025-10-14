@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cg768yibrgm1k"]
 
-[ext_resource type="Script" path="res://scripts/square.gd" id="1_2awk8"]
+[ext_resource type="Script" uid="uid://cvcynkmjpfemp" path="res://scripts/square.gd" id="1_2awk8"]
 [ext_resource type="Material" uid="uid://bac3cqct5ameu" path="res://materials/chess_piece.tres" id="2_xr8s8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ujbq5"]
