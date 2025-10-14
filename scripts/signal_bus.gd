@@ -26,6 +26,12 @@ func _ready():
 	connect("move_here", _lockOutPlayers)
 	connect("move_complete", _changeTurns)
 
+func newGame():
+	activePlayer = WHITE
+	actionState = WHITE
+	checks = Array()
+	kings = [null, null]
+
 func lockGame():
 	_lockOutPlayers(0, 0)
 
